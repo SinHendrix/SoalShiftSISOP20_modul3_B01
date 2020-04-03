@@ -6,14 +6,14 @@
 3. [Soal 3](#3-soal-3)
 4. [Soal 4](#4-soal-4)
 ---
-## Soal 3
+## 3. Soal 3
 
 Pada soal nomo 3 diminta untuk membuat program C yang memindahkan file ke suatu folder berdasarkan ekstensi yang dimiliki. Terdapat 3 mode input yakni -f, -d, dan \*. Dimana pada mode -f user dapat menambahkan argumen yang berupa full path file sebanyak yang user inginkan, pada mode -d user hanya bisa input 1 directory saja, lalu pada mode \* user akan memindahkan seluruh file berdasarkan ekstensinya.
 
 Kesulitan : masih belum bisa membuat 1 folder saja
 
 ---
-## Soal 4
+## 4. Soal 4
 Pada soal 4a diminta untuk membuat program C yang menampilkan hasil perkalian matriks 4x2 dan 2x5. isi matrix adalah angka dengan range 1-20 (tidak perlu dibuat filter angka). Lalu hasil perkalian matriksnya akan digunakan pada soal 4b.
 ```c
 #include <stdio.h>
