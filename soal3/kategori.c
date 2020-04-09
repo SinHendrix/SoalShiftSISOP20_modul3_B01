@@ -1,131 +1,183 @@
-#include<stdio.h>
-#include<unistd.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <time.h>
+#include <wait.h>
+#include <unistd.h>
+#include <errno.h>
+#include <fcntl.h>
 #include<sys/types.h>
-#include<sys/wait.h>
-#include<string.h>
-#include<dirent.h>
-#include<stdlib.h>
+#include<sys/stat.h>
+#include <syslog.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <pthread.h>
+#include <limits.h>
 
-// int move_file()
-//  {
-//  FILE *f1,*f2;
-//  char ch,s[10],fn1[20];
-//  int a;
-//  printf("\nAre u see the privious files(1/0)?");
-//  scanf("%d",&a);
-//  if(a==1)
-//  print_file();
-//  printf("Enter the source file name:");
-//  scanf("%s",&fn1);
-//  printf("Enter the Destination file name:");
-//  scanf("%s",&fn2);
-//
-// f1=fopen(fn1,"r");
-//  if(f1==NULL)
-//   printf("Can't open the file");
-//  else {
-//   f2=fopen(fn2,"w");
-//   while((ch=getc(f1))!=EOF)
-//    putc(ch,f2);
-//   printf("One File moved");
-//   fclose(f2);
-//   remove(fn1);
-// 	  }
-//   fclose(f1);
-//   return 0;
-//  }
+// typedef struct arg_struct {
+//     char asal[1000];
+// }arg_struct;
+    
+char cwd[1000];
 
+int is_regular_file(const char *path) //jika 0 bukan file
+{
+    struct stat path_stat;
+    stat(path, &path_stat);
+    return S_ISREG(path_stat.st_mode);
+}
 
-int main (int argc, char **argv){// .3/ == 1    ./3 -f argv[1] == -f
-  char* point;
-  // char* fullname;
-  int status;
-
-
-  if (argc > 2){
-    // printf("%s\n", argv[1]);
-    if (strcmp(argv[1], "-f") == 0){
-      for (int i = 2; i < argc; i++){
-        char ext[100] = {0}, fullname[100] = {0};
-        char dir[1000] = {0}, filename[1000] = {0};
-        if((point = strrchr(argv[i],'.')) != NULL ) {
-          // printf("%s\n", point+1);
-          strcpy(ext, point+1);
-
-          if((point = strrchr(argv[i],'/')) != NULL ){
-              // filename = strrchr(argv[i],'/');
-              strcpy(filename, point);
-          }
-          printf("ini filename : %s\n", filename);
-          sprintf(dir, "/home/sin/modul3/%s", ext);
-          // printf("filename : %s\ndir : %s\n",filename, dir);
-          // printf("%s\n", ext);
-          // if(strcmp(point,".csv") == 0) {
-          //
-          // }
-          chdir(dir);
-          mkdir(ext, 0777);
-          size_t len = 0 ;
-          const char a[1000];
-          const char b[1000];
-          strcpy(a, filename);
-          strcpy(b, dir);
-          sprintf(b, "%s%s", b, filename);
-          printf("%s\n%s\n%s\n", argv[i], a, b);
-          FILE *f1,*f2;
-          char ch,s[10],fn1[1000],fn2[1000];
-          // int a;
-          // printf("\nAre u see the privious files(1/0)?");
-          // scanf("%d",&a);
-          // if(a==1)
-          // print_file();
-          // printf("Enter the source file name:");
-          // scanf("%s",&fn1);
-          strcpy(fn1, argv[i]);
-          // printf("Enter the Destination file name:");
-          // scanf("%s",&fn2);
-          strcpy(fn2, b);
-
-          f1=fopen(fn1,"r");
-          if(f1==NULL){
-            printf("Can't open the file");
-          }
-
-          else {
-           f2=fopen(fn2,"w");
-           while((ch=getc(f1))!=EOF){
-             putc(ch,f2);
-           }
-           printf("One File moved");
-           fclose(f2);
-           remove(fn1);
-         	}
-           fclose(f1);
-
-        }
+void pindahFile(char *argv){
+//   printf("stringvoid = %s\n", argv);
+//   printf("stringvoid = %s\n", cwd);
+  
+  char string[1000];
+  strcpy(string, argv);
+  puts(string);
+  int isFile = is_regular_file(string);
+  char dot = '.'; 
+  char slash = '/';
+  char* tipe = strrchr(string, dot); 
+  char* nama = strrchr(string, slash);
+  
+  char tipeLow[100];
+  if(tipe)
+  {
+    if((tipe[strlen(tipe)-1] >= 'a' && tipe[strlen(tipe)-1] <= 'z') || (tipe[strlen(tipe)-1] >= 'A' && tipe[strlen(tipe)-1] <= 'Z'))
+    {
+      strcpy(tipeLow, tipe);
+      for(int i = 0; tipeLow[i]; i++){
+        tipeLow[i] = tolower(tipeLow[i]);
       }
     }
+    else {
+      strcpy(tipeLow, tipe);
+    }
   }
-  else {
-    printf("invalid input\n");
+  else
+  {
+    if(!isFile){
+      printf("ini adalah folder, salah argumen\n");
+    //   mkdir(nama, 0777);
+      return;
+    }
+    else
+    {
+      strcpy(tipeLow, " Unknown"); //tanpa ekstensi
+    }
   }
+    mkdir((tipeLow + 1), 0777); //bikin folder ekstensi
+
+    size_t len = 0 ;
+    // strcpy
+    char a[1000] ; //res
+    strcpy(a, argv);
+    char b[1000] ; //des
+    strcpy(b, cwd);
+    strcat(b, "/");
+    strcat(b, tipeLow+1);
+    strcat(b, nama);
+    printf("a = %s\n", a);
+
+    printf("b = %s\n", b);
+
+    rename(a, b);
+    remove(a);
 }
-// .txt
-// TXT
-// .jpg
-// JPG
-// JPEG
-// ZIP
-// PNG
-// png
-// zip
-// gz
-// bin
-// hex
-// js
-// JS
-// c
-// GIF
-// sh
-// pdf
+
+void *pindahf(void* arg){
+  char* asal = (char*) arg;
+  printf("asal = %s\n", asal);
+  // printf("stringthr = %s\n", args.cwd);
+  // puts(asal);
+  pindahFile(asal);
+  pthread_exit(0);
+}
+
+void sortHere(char *asal){
+  // arg_struct args;
+  // args.cwd = "/home/sin/modul3";
+  strcpy(cwd,"/home/sin/modul3/soal3/soal3");
+  DIR *dirp;
+  char files[240][240];
+    struct dirent *entry;
+    dirp = opendir(asal);
+    int index = 0;
+    // pthread_t tid[1000]; //max 1000 thread
+    // if (d)
+    // {
+      while ((entry = readdir(dirp)) != NULL)
+      {
+        if(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
+          continue;
+          
+        if(entry->d_type == DT_REG)
+        {
+          char namafile[105];
+          strcpy(namafile, entry->d_name);
+          // sprintf(namafile, "%s/%s", asal, entry->d_name);
+          sprintf(files[index], "%s/%s", asal, entry->d_name);
+          index++;
+        }
+        else
+        {
+          printf("%s is a directory\n", entry->d_name);
+        }
+      }
+      closedir(dirp);
+    // }
+
+    // chdir(cwd);
+    pthread_t threads[index]; 
+    for (int i = 0; i < index; i++)
+      pthread_create(&threads[i], NULL, pindahf, files[i]);
+
+    for (int i = 0; i < index; i++)
+      pthread_join(threads[i], NULL);
+}
+int main(int argc, char* argv[]) 
+{ 
+
+  // char cwd[1000];
+  // arg_struct args;
+  getcwd(cwd, sizeof(cwd));
+
+  
+  if(strcmp(argv[1],"-f")==0)//command -f--------------------------------------------------------------
+  {
+    pthread_t tid[1000]; //max 1000 thread
+    int index = 0;
+    for (int i = 2; i < argc; i++)
+    {
+      // strcpy(args.asal, argv[i]);
+      pthread_create(&tid[index], NULL, pindahf, argv[i]);
+      sleep(0.5);
+      index++;
+    }
+    for (int i = 0; i < index; i++) {
+        pthread_join(tid[i], NULL);
+    }
+  }
+  else if(strcmp(argv[1],"*")==0)
+  {
+    char asal[] = "/home/sin/modul3/soal3/soal3";
+    
+    sortHere(asal);
+  }
+  else if(strcmp(argv[1],"-d")==0){
+      char asal[1000];
+      strcpy(asal, argv[2]);
+      sortHere(asal);
+    //   rename(asal, args.cwd);
+    //   sortHere(asal);
+  }
+  else
+  {
+      printf("salah argumen bos\n");
+      return 0;
+  }
+  
+	return 0; 
+} 
