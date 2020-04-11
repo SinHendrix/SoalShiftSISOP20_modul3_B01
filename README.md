@@ -1,11 +1,16 @@
 
-# SoalShiftSISOP20_modul3_B01
-### Soal Shift Modul 2
+# SoalShiftSISOP20_modul4_B01
+### Soal Shift Modul 4
 1. [Soal 1](#1-soal-1)
 2. [Soal 2](#2-soal-2)
 3. [Soal 3](#3-soal-3)
 4. [Soal 4](#4-soal-4)
 ---
+
+## 1. Soal 1
+Belum sempat mengerjakan karena kekurangan waktu
+## 2. Soal 2
+Belum sempat mengerjakan karena kekurangan waktu
 ## 3. Soal 3
 
 Pada soal nomo 3 diminta untuk membuat program C yang memindahkan file ke suatu folder berdasarkan ekstensi yang dimiliki. Terdapat 3 mode input yakni -f, -d, dan \*. Dimana pada mode -f user dapat menambahkan argumen yang berupa full path file sebanyak yang user inginkan, pada mode -d user hanya bisa input 1 directory saja, lalu pada mode \* user akan memindahkan seluruh file berdasarkan ekstensinya.
@@ -32,14 +37,14 @@ Pada soal nomo 3 diminta untuk membuat program C yang memindahkan file ke suatu 
     
 char cwd[1000];
 
-int is_regular_file(const char *path) //jika 0 bukan file
+int is_regular_file(const char *path) //fungsi untuk cek apakah file atau bukan
 {
     struct stat path_stat;
     stat(path, &path_stat);
     return S_ISREG(path_stat.st_mode);
 }
 
-void pindahFile(char *argv){
+void pindahFile(char *argv){// fungsi untuk memindahkan sebuah file
   
   char string[1000];
   strcpy(string, argv);
@@ -47,43 +52,43 @@ void pindahFile(char *argv){
   int isFile = is_regular_file(string);
   char dot = '.'; 
   char slash = '/';
-  char* tipe = strrchr(string, dot); 
-  char* nama = strrchr(string, slash);
+  char* tipe = strrchr(string, dot); //tipe berisi ekstensi include dengan .
+  char* nama = strrchr(string, slash); // nama berisi nama file beserta ekstensi dan /
   
   char tipeLow[100];
   if(tipe)
   {
-    if((tipe[strlen(tipe)-1] >= 'a' && tipe[strlen(tipe)-1] <= 'z') || (tipe[strlen(tipe)-1] >= 'A' && tipe[strlen(tipe)-1] <= 'Z'))
+    if((tipe[strlen(tipe)-1] >= 'a' && tipe[strlen(tipe)-1] <= 'z') || (tipe[strlen(tipe)-1] >= 'A' && tipe[strlen(tipe)-1] <= 'Z')) // cek apakah terdapat huruf besar atau kecil
     {
       strcpy(tipeLow, tipe);
       for(int i = 0; tipeLow[i]; i++){
-        tipeLow[i] = tolower(tipeLow[i]);
+        tipeLow[i] = tolower(tipeLow[i]);// mengubah semua huruf menjadi lowercase
       }
     }
     else {
-      strcpy(tipeLow, tipe);
+      strcpy(tipeLow, tipe);// copy string tipe ke string tipelow
     }
   }
   else
   {
-    if(!isFile){
-      printf("ini adalah folder, salah argumen\n");
+    if(!isFile){// cek apakah file atau bukan
+      printf("ini adalah folder, salah argumen\n");// print bila bukan file
       return;
     }
     else
     {
-      strcpy(tipeLow, " Unknown"); //tanpa ekstensi
+      strcpy(tipeLow, " Unknown"); //apabila tidak memiliki ekstensi, maka tipelow menjadi unknown
     }
   }
-    mkdir((tipeLow + 1), 0777); //bikin folder ekstensi
+    mkdir((tipeLow + 1), 0777); //membuat folder ekstensi
 
     size_t len = 0 ;
-    char a[1000] ; //res
+    char a[1000] ; //string a adalah full path file awal
     strcpy(a, argv);
-    char b[1000] ; //des
+    char b[1000] ; //string b adalah full path file ke directory tujuan
     strcpy(b, cwd);
     strcat(b, "/");
-    strcat(b, tipeLow+1);
+    strcat(b, tipeLow+1);// mengambil ekstensinya saja, karena tipelow masih mengandung . maka dari itu +1 agar didapatkan ekstensi saja
     strcat(b, nama);
     printf("a = %s\n", a);
 
@@ -93,7 +98,7 @@ void pindahFile(char *argv){
     remove(a);
 }
 
-void *pindahf(void* arg){
+void *pindahf(void* arg){// fungsi untuk memanggil fungsi pindahFile
   char* asal = (char*) arg;
   printf("asal = %s\n", asal);
   pindahFile(asal);
@@ -112,7 +117,7 @@ void sortHere(char *asal){
         if(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)
           continue;
           
-        if(entry->d_type == DT_REG)
+        if(entry->d_type == DT_REG)// cek apakah merupakan file atau bukan
         {
           char namafile[105];
           strcpy(namafile, entry->d_name);
@@ -129,7 +134,7 @@ void sortHere(char *asal){
 
     pthread_t threads[index]; 
     for (int i = 0; i < index; i++)
-      pthread_create(&threads[i], NULL, pindahf, files[i]);
+      pthread_create(&threads[i], NULL, pindahf, files[i]);// membuat thread untuk memindahkan file
 
     for (int i = 0; i < index; i++)
       pthread_join(threads[i], NULL);
@@ -145,9 +150,9 @@ int main(int argc, char* argv[])
   {
     pthread_t tid[1000]; //max 1000 thread
     int index = 0;
-    for (int i = 2; i < argc; i++)
+    for (int i = 2; i < argc; i++)// loop sebanyak argumen yang dimasukkan
     {
-      pthread_create(&tid[index], NULL, pindahf, argv[i]);
+      pthread_create(&tid[index], NULL, pindahf, argv[i]);// membuat thread untuk memindahkan file
       sleep(0.8);
       index++;
     }
@@ -166,7 +171,7 @@ int main(int argc, char* argv[])
   }
   else
   {
-      printf("salah argumen bos\n");
+      printf("salah argumen bos\n");// handle apabila argumen selain yang diharapkan
       return 0;
   }
   
