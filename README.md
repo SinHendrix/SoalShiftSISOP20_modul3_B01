@@ -1,6 +1,6 @@
 
-# SoalShiftSISOP20_modul4_B01
-### Soal Shift Modul 4
+# SoalShiftSISOP20_modul3_B01
+### Soal Shift Modul 3
 1. [Soal 1](#1-soal-1)
 2. [Soal 2](#2-soal-2)
 3. [Soal 3](#3-soal-3)
